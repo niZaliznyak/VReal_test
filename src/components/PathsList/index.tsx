@@ -1,5 +1,7 @@
-import List from "@mui/material/List";
+import { useMemo, useState } from "react";
+import { observer } from "mobx-react-lite";
 
+import List from "@mui/material/List";
 import SearchInput from "../SearchInput";
 import PathsListItem from "./components/PathsListItem";
 import { Wrap } from "./styled";
@@ -12,12 +14,22 @@ type TProps = {
   onSelect: (path: TPath | null) => void;
 };
 
-export default function PathsList({ paths, onSelect, selectedId }: TProps) {
+function PathsList({ paths, onSelect, selectedId }: TProps) {
+  const [search, setSearch] = useState("");
+  const filteredPaths = useMemo(() => {
+    const searchLowerCase = search.toLowerCase();
+    return paths.filter(
+      ({ name, fullDescription }) =>
+        name.toLowerCase().includes(searchLowerCase) ||
+        fullDescription.toLowerCase().includes(searchLowerCase)
+    );
+  }, [paths, paths.length, search]);
+
   return (
     <Wrap>
-      <SearchInput />
+      <SearchInput value={search} onChange={setSearch} />
       <List sx={{ overflow: "auto", marginTop: "6px" }}>
-        {paths.map((path) => (
+        {filteredPaths.map((path) => (
           <PathsListItem
             key={path.id}
             path={path}
@@ -29,3 +41,5 @@ export default function PathsList({ paths, onSelect, selectedId }: TProps) {
     </Wrap>
   );
 }
+
+export default observer(PathsList);

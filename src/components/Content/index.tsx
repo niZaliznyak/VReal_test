@@ -11,7 +11,7 @@ import { TPath } from "../../types";
 
 function Content() {
   const [selected, setSelelected] = useState<TPath | null>(null);
-  const paths = pathsStore.getPaths();
+  const paths = pathsStore.getPaths;
 
   return (
     <Container sx={{ height: "calc(100vh - 84px)" }}>

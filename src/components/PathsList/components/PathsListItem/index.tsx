@@ -39,7 +39,9 @@ function PathsListItem({ path, selected, onSelect }: TProps) {
           {shortDescription}
         </Typography>
       </Info>
-      <Typography sx={{ fontWeight: "600" }}>{length}</Typography>
+      <Typography sx={{ fontWeight: "600", whiteSpace: "nowrap" }}>
+        {length}
+      </Typography>
       <ChevronRightIcon />
     </ItemWrapper>
   );
