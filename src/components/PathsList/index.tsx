@@ -1,43 +1,31 @@
 import List from "@mui/material/List";
-import Paper from "@mui/material/Paper";
 
 import SearchInput from "../SearchInput";
 import PathsListItem from "./components/PathsListItem";
+import { Wrap } from "./styled";
 
-export default function PathsList() {
+import { TPath } from "../../types";
+
+type TProps = {
+  paths: TPath[];
+  selectedId?: number;
+  onSelect: (path: TPath | null) => void;
+};
+
+export default function PathsList({ paths, onSelect, selectedId }: TProps) {
   return (
-    <Paper
-      sx={{
-        display: "flex",
-        flexDirection: 'column',
-        maxWidth: 400,
-        padding: 1,
-        border: "1px solid grey",
-        overflow: "hidden"
-      }}
-    >
+    <Wrap>
       <SearchInput />
       <List sx={{ overflow: "auto", marginTop: "6px" }}>
-        <PathsListItem
-          selected
-          name="Title"
-          description="The palette enables you to modify the color of the components to suit your brand."
-          length="1600m"
-          favorite
-        />
-        <PathsListItem
-          name="Title"
-          description="The palette enables you to modify the color of the components to suit your brand."
-          length="1600m"
-        />
-        <PathsListItem
-          name="Title"
-          description="The palette enables 
-          you to modify the color of the components to suit your brand."
-          length="1600m"
-          favorite
-        />
+        {paths.map((path) => (
+          <PathsListItem
+            key={path.id}
+            path={path}
+            selected={path.id === selectedId}
+            onSelect={onSelect}
+          />
+        ))}
       </List>
-    </Paper>
+    </Wrap>
   );
 }

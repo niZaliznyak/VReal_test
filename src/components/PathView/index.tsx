@@ -1,53 +1,72 @@
-import ZoomOutMapIcon from "@mui/icons-material/ZoomOutMap";
-import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
-import Button from "@mui/material/Button";
+import { useState } from "react";
+import { observer } from "mobx-react-lite";
 
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import Typography from "@mui/material/Typography";
+import ZoomOutMapIcon from "@mui/icons-material/ZoomOutMap";
+
+import AlertDialog from "./components/AlertDialog";
 import { Actions, Empty, Title } from "./styled";
 import { TPath } from "../../types";
 
+import pathsStore from "../../store";
+
 type TProps = {
-  pathData?: TPath;
+  path: TPath | null;
+  onRemove: () => void;
 };
 
-export default function PathView({ pathData }: TProps) {
-  if (true) {
+function PathView({ path, onRemove }: TProps) {
+  const { removePath, toggleFavorite } = pathsStore;
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+
+  if (!path) {
     return (
-      <Box sx={{ width: "100%", marginLeft: 0.5, padding: "0 1rem" }}>
-        <Title>
-          <Typography variant="h4">
-            Title
-          </Typography>
-          <Typography variant="h5" sx={{ fontWeight: "bold" }}>
-            1500m
-          </Typography>
-        </Title>
-        <Typography gutterBottom>
-          Icon buttons are commonly found in app bars and toolbars. Icons are
-          also appropriate for toggle buttons that allow a single choice to be
-          selected or deselected, such as adding or removing a star to an item.
+      <Empty>
+        <ZoomOutMapIcon
+          sx={{
+            fontSize: 250,
+            opacity: 0.15
+          }}
+        />
+        <Typography sx={{ fontWeight: "bold", opacity: 0.25 }}>
+          Select any path
         </Typography>
-        <Actions>
-          <Button variant="text">Add to favorites</Button>
-          <Button variant="text" color="error">
-            Remove
-          </Button>
-        </Actions>
-      </Box>
+      </Empty>
     );
   }
 
+  const handleRemove = () => {
+    setOpenDeleteDialog(false);
+    removePath(path.id);
+    onRemove();
+  };
+
   return (
-    <Empty>
-      <ZoomOutMapIcon
-        sx={{
-          fontSize: 250,
-          opacity: 0.15
-        }}
+    <Box sx={{ width: "100%", marginLeft: 0.5, padding: "0 1rem" }}>
+      <Title>
+        <Typography variant="h4">{path.name}</Typography>
+        <Typography variant="h5" sx={{ fontWeight: "bold" }}>
+          {path.length}
+        </Typography>
+      </Title>
+      <Typography gutterBottom>{path.fullDescription}</Typography>
+      <Actions>
+        <Button onClick={() => toggleFavorite(path.id)} variant="text">
+          {path.favorite ? "Remove from favorites" : "Add to favorites"}
+        </Button>
+        <Button onClick={() => setOpenDeleteDialog(true)} variant="text" color="error">
+          Remove
+        </Button>
+      </Actions>
+      <AlertDialog
+        open={openDeleteDialog}
+        onClose={() => setOpenDeleteDialog(false)}
+        onAgree={handleRemove}
       />
-      <Typography sx={{ fontWeight: "bold", opacity: 0.25 }}>
-        Select any path
-      </Typography>
-    </Empty>
+    </Box>
   );
 }
+
+export default observer(PathView);

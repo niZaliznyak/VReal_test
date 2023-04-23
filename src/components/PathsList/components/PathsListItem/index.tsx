@@ -1,3 +1,5 @@
+import { observer } from "mobx-react-lite";
+
 import ZoomOutMapIcon from "@mui/icons-material/ZoomOutMap";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import StarIcon from "@mui/icons-material/Star";
@@ -7,19 +9,24 @@ import { ItemWrapper, Info, Title } from "./styled";
 
 import { TPath } from "../../../../types";
 
-type TProps = TPath & {
+type TProps = {
+  path: TPath;
   selected?: boolean;
+  onSelect: (path: TPath | null) => void;
 };
 
-export default function PathsListItem({
-  name,
-  description,
-  length,
-  favorite,
-  selected
-}: TProps) {
+function PathsListItem({ path, selected, onSelect }: TProps) {
+  const { name, shortDescription, length, favorite } = path;
+  const handleSelect = () => {
+    if (selected) {
+      onSelect(null);
+    } else {
+      onSelect(path);
+    }
+  };
+
   return (
-    <ItemWrapper selected={selected}>
+    <ItemWrapper onClick={handleSelect} selected={selected}>
       <ZoomOutMapIcon fontSize="large" />
       <Info>
         <Title>
@@ -29,7 +36,7 @@ export default function PathsListItem({
           </Typography>
         </Title>
         <Typography sx={{ fontSize: "0.8rem", maxHeight: "36px" }}>
-          {description}
+          {shortDescription}
         </Typography>
       </Info>
       <Typography sx={{ fontWeight: "600" }}>{length}</Typography>
@@ -37,3 +44,5 @@ export default function PathsListItem({
     </ItemWrapper>
   );
 }
+
+export default observer(PathsListItem);

@@ -6,13 +6,14 @@ export const Empty = styled("div")({
   justifyContent: "center",
   alignItems: "center",
   height: "100%",
-  width: "100%"
+  width: "100%",
+  userSelect: "none"
 });
 
 export const Title = styled("div")({
   display: "flex",
   justifyContent: "space-between",
-  alignItems: "center",
+  alignItems: "center"
 });
 
 export const Actions = styled("div")({
