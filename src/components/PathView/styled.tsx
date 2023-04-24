@@ -7,7 +7,8 @@ export const Empty = styled("div")({
   alignItems: "center",
   height: "100%",
   width: "100%",
-  userSelect: "none"
+  userSelect: "none",
+  marginTop: '150px'
 });
 
 export const Title = styled("div")({

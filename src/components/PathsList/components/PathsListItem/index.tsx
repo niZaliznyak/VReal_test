@@ -16,7 +16,7 @@ type TProps = {
 };
 
 function PathsListItem({ path, selected, onSelect }: TProps) {
-  const { name, shortDescription, length, favorite } = path;
+  const { title, shortDescription, length, favorite } = path;
   const handleSelect = () => {
     if (selected) {
       onSelect(null);
@@ -32,7 +32,7 @@ function PathsListItem({ path, selected, onSelect }: TProps) {
         <Title>
           {favorite && <StarIcon />}
           <Typography sx={{ fontWeight: "bold", fontSize: "1.1rem" }}>
-            {name}
+            {title}
           </Typography>
         </Title>
         <Typography sx={{ fontSize: "0.8rem", maxHeight: "36px" }}>

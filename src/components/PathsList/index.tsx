@@ -19,8 +19,8 @@ function PathsList({ paths, onSelect, selectedId }: TProps) {
   const filteredPaths = useMemo(() => {
     const searchLowerCase = search.toLowerCase();
     return paths.filter(
-      ({ name, fullDescription }) =>
-        name.toLowerCase().includes(searchLowerCase) ||
+      ({ title, fullDescription }) =>
+        title.toLowerCase().includes(searchLowerCase) ||
         fullDescription.toLowerCase().includes(searchLowerCase)
     );
   }, [paths, paths.length, search]);

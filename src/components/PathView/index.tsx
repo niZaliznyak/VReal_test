@@ -6,6 +6,7 @@ import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import ZoomOutMapIcon from "@mui/icons-material/ZoomOutMap";
 
+import Map from "../Map";
 import AlertDialog from "./components/AlertDialog";
 import { Actions, Empty, Title } from "./styled";
 import { TPath } from "../../types";
@@ -44,19 +45,32 @@ function PathView({ path, onRemove }: TProps) {
   };
 
   return (
-    <Box sx={{ width: "100%", marginLeft: 0.5, padding: "0 1rem" }}>
+    <Box
+      sx={{ width: "100%", height: "100%", marginLeft: 0.5, padding: "0 1rem" }}
+    >
       <Title>
-        <Typography variant="h4">{path.name}</Typography>
+        <Typography variant="h4" sx={{ wordBreak: "break-word" }}>
+          {path.title}
+        </Typography>
         <Typography variant="h5" sx={{ fontWeight: "bold" }}>
           {path.length}
         </Typography>
       </Title>
-      <Typography gutterBottom>{path.fullDescription}</Typography>
+      <Typography gutterBottom sx={{ wordBreak: "break-word" }}>
+        {path.fullDescription}
+      </Typography>
+      <Box sx={{ height: "450px" }}>
+        <Map initialMarkers={path.markers} onlyView />
+      </Box>
       <Actions>
         <Button onClick={() => toggleFavorite(path.id)} variant="text">
           {path.favorite ? "Remove from favorites" : "Add to favorites"}
         </Button>
-        <Button onClick={() => setOpenDeleteDialog(true)} variant="text" color="error">
+        <Button
+          onClick={() => setOpenDeleteDialog(true)}
+          variant="text"
+          color="error"
+        >
           Remove
         </Button>
       </Actions>
