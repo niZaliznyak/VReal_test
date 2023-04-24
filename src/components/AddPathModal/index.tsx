@@ -12,18 +12,7 @@ import DoneIcon from "@mui/icons-material/Done";
 
 import Map from "../Map";
 import { IconWrap, ModalContent, Section, TitleBar } from "./styled";
-
-import pathsStore from "../../store";
-import { TLocation, TPath } from "../../types";
-
-type TAddPathForm = Pick<
-  TPath,
-  "title" | "shortDescription" | "fullDescription"
->;
-
-type TAddPathErrors = Partial<TAddPathForm>;
-
-type TCourse = Pick<TPath, "length" | "markers">;
+import useCreatePathForm from "./hooks/useCreatePathForm";
 
 type TProps = {
   open: boolean;
@@ -31,78 +20,22 @@ type TProps = {
 };
 
 export default function AddPathModal({ onClose, open }: TProps) {
-  const { addPath } = pathsStore;
   const { isLoaded } = useJsApiLoader({
     id: "google_maps_script",
     googleMapsApiKey: process.env.REACT_APP_API_KEY as string
   });
-  const [course, setCourse] = useState<TCourse>();
-  const [formValues, setFormValues] = useState<TAddPathForm>({
-    title: "",
-    shortDescription: "",
-    fullDescription: ""
-  });
-  const [formErrors, setFormErrors] = useState<TAddPathErrors>({});
-
-  const handleInputChange = (
-    event: React.ChangeEvent<HTMLTextAreaElement | HTMLInputElement>
-  ) => {
-    const { name, value } = event.target;
-    setFormValues({ ...formValues, [name]: value });
-
-    const isShortDescription = name === "shortDescription";
-    const isOverLimit = isShortDescription && value.length > 160;
-    setFormErrors((prevState) => ({
-      ...prevState,
-      [name]: isOverLimit ? `Limit ${value.length} of 160 (reached)` : ""
-    }));
-  };
-
-  const validateForm = () => {
-    let errors: TAddPathErrors = {};
-
-    if (!formValues.title) {
-      errors.title = "Please enter the title";
-    }
-
-    if (!formValues.shortDescription) {
-      errors.shortDescription = "Please enter the short description";
-    }
-
-    if (formValues.shortDescription.length > 160) {
-      errors.shortDescription = "Please enter the shorter description";
-    }
-
-    if (!formValues.fullDescription) {
-      errors.fullDescription = "Please enter the description";
-    }
-
-    setFormErrors(errors);
-
-    return Object.keys(errors).length === 0;
-  };
+  const {
+    onFormInputChange,
+    onCourseChange,
+    onSubmitForm,
+    validateForm,
+    formErrors,
+    formValues,
+    course
+  } = useCreatePathForm();
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const isValid = validateForm();
-    if (isValid && course?.markers) {
-      addPath({
-        id: new Date().valueOf(),
-        ...formValues,
-        ...course
-      });
-      onClose();
-      setFormValues({
-        title: "",
-        shortDescription: "",
-        fullDescription: ""
-      });
-      setCourse({ length: "0 m", markers: [] as TLocation[] });
-    }
-  };
-
-  const handleCourseChange = (markers: TLocation[], length: string) => {
-    setCourse({ length, markers });
+    onSubmitForm(e, onClose)
   };
 
   return (
@@ -131,7 +64,7 @@ export default function AddPathModal({ onClose, open }: TProps) {
               name="title"
               label="Title"
               value={formValues.title}
-              onChange={handleInputChange}
+              onChange={onFormInputChange}
               fullWidth
               error={!!formErrors.title}
               helperText={formErrors.title || " "} //space string to avoid jumping
@@ -140,7 +73,7 @@ export default function AddPathModal({ onClose, open }: TProps) {
               name="shortDescription"
               label="Short description"
               value={formValues.shortDescription}
-              onChange={handleInputChange}
+              onChange={onFormInputChange}
               fullWidth
               multiline
               rows={2}
@@ -155,7 +88,7 @@ export default function AddPathModal({ onClose, open }: TProps) {
               name="fullDescription"
               label="Full description"
               value={formValues.fullDescription}
-              onChange={handleInputChange}
+              onChange={onFormInputChange}
               fullWidth
               multiline
               rows={4}
@@ -176,7 +109,7 @@ export default function AddPathModal({ onClose, open }: TProps) {
         </Section>
         <Divider orientation="vertical" flexItem />
         <Section>
-          {isLoaded ? <Map onCourseChage={handleCourseChange} /> : "Loading..."}
+          {isLoaded ? <Map onCourseChage={onCourseChange} /> : "Loading..."}
         </Section>
       </ModalContent>
     </Dialog>
