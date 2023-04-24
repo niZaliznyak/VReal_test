@@ -7,6 +7,8 @@ import CloseIcon from "@mui/icons-material/Close";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
+import MapIcon from "@mui/icons-material/Map";
+import DoneIcon from '@mui/icons-material/Done';
 
 import Map from "../Map";
 import { IconWrap, ModalContent, Section, TitleBar } from "./styled";
@@ -164,9 +166,14 @@ export default function AddPathModal({ onClose, open }: TProps) {
               error={!!formErrors.fullDescription}
               helperText={formErrors.fullDescription || " "}
             />
-            <Box sx={{ height: "120px" }}>Length {course?.length}</Box>
+            <Box
+              sx={{ height: "120px", display: "flex", alignItems: "center" }}
+            >
+              <MapIcon sx={{ fontSize: 42, opacity: 0.25 }} />
+              Length {course?.length}
+            </Box>
             <Button onClick={validateForm} type="submit" variant="contained">
-              Add path
+              <DoneIcon />Add path
             </Button>
           </Box>
         </Section>
