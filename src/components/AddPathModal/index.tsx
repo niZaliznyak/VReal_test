@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useJsApiLoader } from "@react-google-maps/api";
 
 import Dialog from "@mui/material/Dialog";
 import Divider from "@mui/material/Divider";
@@ -7,6 +8,7 @@ import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 
+import Map from "../Map";
 import { IconWrap, ModalContent, Section, TitleBar } from "./styled";
 
 import pathsStore from "../../store";
@@ -26,6 +28,10 @@ type TProps = {
 
 export default function AddPathModal({ onClose, open }: TProps) {
   const { addPath } = pathsStore;
+  const { isLoaded } = useJsApiLoader({
+    id: "google_maps_script",
+    googleMapsApiKey: process.env.REACT_APP_API_KEY as string
+  });
   const [formValues, setFormValues] = useState<TAddPathForm>({
     title: "",
     shortDescription: "",
@@ -78,7 +84,6 @@ export default function AddPathModal({ onClose, open }: TProps) {
       addPath();
     }
     addPath();
-
   };
 
   return (
@@ -145,7 +150,7 @@ export default function AddPathModal({ onClose, open }: TProps) {
           </Box>
         </Section>
         <Divider orientation="vertical" flexItem />
-        <Section>x </Section>
+        <Section>{isLoaded ? <Map /> : "Loading..."}</Section>
       </ModalContent>
     </Dialog>
   );
