@@ -1,4 +1,9 @@
-import { GoogleMap, Marker } from "@react-google-maps/api";
+import {
+  GoogleMap,
+  Marker,
+  DirectionsService,
+  DirectionsRenderer
+} from "@react-google-maps/api";
 
 import useMap from "./hooks/useMap";
 import { mapOptions } from "./config";
@@ -6,7 +11,18 @@ import { mapOptions } from "./config";
 type TProps = {};
 
 export default function Map(props: TProps) {
-  const { center, markers, addMarker, removeMarker } = useMap();
+  const {
+    center,
+    markers,
+    origin,
+    destination,
+    waypoints,
+    directions,
+    distance,
+    addMarker,
+    removeMarker,
+    onChangeDirection
+  } = useMap();
 
   return (
     <GoogleMap
@@ -19,6 +35,25 @@ export default function Map(props: TProps) {
       onDblClick={addMarker}
       options={mapOptions}
     >
+      {origin && destination && (
+        <DirectionsService
+          options={{
+            destination,
+            origin,
+            waypoints,
+            travelMode: google.maps.TravelMode.WALKING
+          }}
+          callback={onChangeDirection}
+        />
+      )}
+      {directions && (
+        <DirectionsRenderer
+          directions={directions}
+          options={{
+            suppressMarkers: true
+          }}
+        />
+      )}
       {markers.map((marker) => (
         <Marker
           key={marker.id}

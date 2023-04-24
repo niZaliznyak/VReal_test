@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { getBrowserLocation } from "../../../utils/getBrowserLocation";
 
 type TLocation = {
@@ -7,9 +7,37 @@ type TLocation = {
   lng: number;
 };
 
+type TDirections = google.maps.DirectionsResult | null;
+
 export default function useMap() {
   const [center, setCenter] = useState<TLocation>();
   const [markers, setMarkers] = useState<TLocation[]>([]);
+  const [directions, setDirections] = useState<TDirections>(null);
+  const [distance, setDistance] = useState<number>(0);
+
+  const origin = markers[0];
+  const destination = markers.length > 1 ? markers.at(-1) : null;
+  const waypoints = useMemo(() => {
+    return markers.map(({ lat, lng }) => ({
+      location: new google.maps.LatLng(lat, lng)
+    }));
+  }, [markers]);
+
+  const onChangeDirection = useCallback(
+    (response: TDirections) => {
+      if (response !== null) {
+        setDirections(response);
+        const route = response.routes[0];
+        const distanceInMeters = Math.round(
+          google.maps.geometry.spherical.computeLength(route.overview_path)
+        );
+        if (distanceInMeters !== distance) {
+          setDistance(distanceInMeters);
+        }
+      }
+    },
+    [distance]
+  );
 
   const addMarker = ({ latLng }: google.maps.MapMouseEvent) => {
     const newMarker = {
@@ -49,7 +77,13 @@ export default function useMap() {
   return {
     center,
     markers,
+    origin,
+    destination,
+    directions,
+    waypoints,
+    distance,
     addMarker,
-    removeMarker
+    removeMarker,
+    onChangeDirection
   };
 }
