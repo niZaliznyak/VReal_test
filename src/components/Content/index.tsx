@@ -14,10 +14,11 @@ function Content() {
   const paths = pathsStore.getPaths;
 
   return (
-    <Container sx={{ height: "calc(100vh - 84px)" }}>
+    <Container sx={{ height: "100%" }}>
       <Paper
         sx={{
           height: "100%",
+          minHeight: "620px",
           padding: 1,
           marginTop: 2,
           display: "flex"

@@ -6,9 +6,9 @@ import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import ZoomOutMapIcon from "@mui/icons-material/ZoomOutMap";
 
+import Map from "../Map";
 import AlertDialog from "./components/AlertDialog";
 import { Actions, Empty, Title } from "./styled";
-import Map from "../Map";
 import { TPath } from "../../types";
 
 import pathsStore from "../../store";
@@ -45,15 +45,21 @@ function PathView({ path, onRemove }: TProps) {
   };
 
   return (
-    <Box sx={{ width: "100%", marginLeft: 0.5, padding: "0 1rem" }}>
+    <Box
+      sx={{ width: "100%", height: "100%", marginLeft: 0.5, padding: "0 1rem" }}
+    >
       <Title>
-        <Typography variant="h4">{path.title}</Typography>
+        <Typography variant="h4" sx={{ wordBreak: "break-word" }}>
+          {path.title}
+        </Typography>
         <Typography variant="h5" sx={{ fontWeight: "bold" }}>
           {path.length}
         </Typography>
       </Title>
-      <Typography gutterBottom>{path.fullDescription}</Typography>
-      <Box sx={{ height: "500px" }}>
+      <Typography gutterBottom sx={{ wordBreak: "break-word" }}>
+        {path.fullDescription}
+      </Typography>
+      <Box sx={{ height: "450px" }}>
         <Map initialMarkers={path.markers} onlyView />
       </Box>
       <Actions>
