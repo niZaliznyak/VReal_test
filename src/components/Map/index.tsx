@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import {
   GoogleMap,
   Marker,
@@ -7,10 +8,15 @@ import {
 
 import useMap from "./hooks/useMap";
 import { mapOptions } from "./config";
+import { TLocation } from "../../types";
+import { formatDistance } from "../../utils";
 
-type TProps = {};
+type TProps = {
+  initialMarkers?: TLocation[];
+  onCourseChage?: (markers: TLocation[], length: string) => void;
+};
 
-export default function Map(props: TProps) {
+export default function Map({ initialMarkers, onCourseChage }: TProps) {
   const {
     center,
     markers,
@@ -22,7 +28,11 @@ export default function Map(props: TProps) {
     addMarker,
     removeMarker,
     onChangeDirection
-  } = useMap();
+  } = useMap(initialMarkers);
+
+  useEffect(() => {
+    onCourseChage && onCourseChage(markers, formatDistance(distance));
+  }, [distance, markers, onCourseChage]);
 
   return (
     <GoogleMap

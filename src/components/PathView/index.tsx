@@ -46,7 +46,7 @@ function PathView({ path, onRemove }: TProps) {
   return (
     <Box sx={{ width: "100%", marginLeft: 0.5, padding: "0 1rem" }}>
       <Title>
-        <Typography variant="h4">{path.name}</Typography>
+        <Typography variant="h4">{path.title}</Typography>
         <Typography variant="h5" sx={{ fontWeight: "bold" }}>
           {path.length}
         </Typography>

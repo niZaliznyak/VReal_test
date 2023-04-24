@@ -12,6 +12,7 @@ import Map from "../Map";
 import { IconWrap, ModalContent, Section, TitleBar } from "./styled";
 
 import pathsStore from "../../store";
+import { TLocation } from "../../types";
 
 type TAddPathForm = {
   title: string;
@@ -20,6 +21,11 @@ type TAddPathForm = {
 };
 
 type TAddPathErrors = Partial<TAddPathForm>;
+
+type TCourse = {
+  length: string;
+  markers: TLocation[];
+};
 
 type TProps = {
   open: boolean;
@@ -32,6 +38,7 @@ export default function AddPathModal({ onClose, open }: TProps) {
     id: "google_maps_script",
     googleMapsApiKey: process.env.REACT_APP_API_KEY as string
   });
+  const [course, setCourse] = useState<TCourse>();
   const [formValues, setFormValues] = useState<TAddPathForm>({
     title: "",
     shortDescription: "",
@@ -80,10 +87,24 @@ export default function AddPathModal({ onClose, open }: TProps) {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const isValid = validateForm();
-    if (isValid) {
-      addPath();
+    if (isValid && course?.markers) {
+      addPath({
+        id: new Date().valueOf(),
+        ...formValues,
+        ...course
+      });
+      onClose();
+      setFormValues({
+        title: "",
+        shortDescription: "",
+        fullDescription: ""
+      });
+      setCourse({ length: "0 m", markers: [] as TLocation[] });
     }
-    addPath();
+  };
+
+  const handleCourseChange = (markers: TLocation[], length: string) => {
+    setCourse({ length, markers });
   };
 
   return (
@@ -143,14 +164,16 @@ export default function AddPathModal({ onClose, open }: TProps) {
               error={!!formErrors.fullDescription}
               helperText={formErrors.fullDescription || " "}
             />
-            <Box sx={{ height: "120px" }}>Length 1.300 km</Box>
+            <Box sx={{ height: "120px" }}>Length {course?.length}</Box>
             <Button onClick={validateForm} type="submit" variant="contained">
               Add path
             </Button>
           </Box>
         </Section>
         <Divider orientation="vertical" flexItem />
-        <Section>{isLoaded ? <Map /> : "Loading..."}</Section>
+        <Section>
+          {isLoaded ? <Map onCourseChage={handleCourseChange} /> : "Loading..."}
+        </Section>
       </ModalContent>
     </Dialog>
   );

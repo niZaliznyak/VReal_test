@@ -1,22 +1,21 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
-import { getBrowserLocation } from "../../../utils/getBrowserLocation";
 
-type TLocation = {
-  id: number;
-  lat: number;
-  lng: number;
-};
+import { TLocation } from "../../../types";
+import { getBrowserLocation } from "../../../utils";
 
 type TDirections = google.maps.DirectionsResult | null;
 
-export default function useMap() {
+export default function useMap(initialPath?: TLocation[]) {
   const [center, setCenter] = useState<TLocation>();
   const [markers, setMarkers] = useState<TLocation[]>([]);
   const [directions, setDirections] = useState<TDirections>(null);
   const [distance, setDistance] = useState<number>(0);
 
-  const origin = markers[0];
-  const destination = markers.length > 1 ? markers.at(-1) : null;
+  const origin = useMemo(() => markers[0], [markers]);
+  const destination = useMemo(
+    () => (markers.length > 1 ? markers.at(-1) : null),
+    [markers]
+  );
   const waypoints = useMemo(() => {
     return markers.map(({ lat, lng }) => ({
       location: new google.maps.LatLng(lat, lng)
@@ -53,26 +52,31 @@ export default function useMap() {
   };
 
   useEffect(() => {
-    getBrowserLocation()
-      .then(({ latitude, longitude }) => {
-        const userPositionMarke: TLocation = {
-          id: new Date().valueOf(),
-          lat: latitude,
-          lng: longitude
-        };
-        setCenter(userPositionMarke);
-        setMarkers([userPositionMarke]);
-      })
-      .catch(() => {
-        const initialCenter: TLocation = {
-          id: new Date().valueOf(),
-          lat: 48.464061,
-          lng: 35.045512
-        };
-        setCenter(initialCenter);
-        setMarkers([initialCenter]);
-      });
-  }, []);
+    if (initialPath) {
+      setCenter(initialPath[0]);
+      setMarkers(initialPath);
+    } else {
+      getBrowserLocation()
+        .then(({ latitude, longitude }) => {
+          const userPositionMarke: TLocation = {
+            id: new Date().valueOf(),
+            lat: latitude,
+            lng: longitude
+          };
+          setCenter(userPositionMarke);
+          setMarkers([userPositionMarke]);
+        })
+        .catch(() => {
+          const initialCenter: TLocation = {
+            id: new Date().valueOf(),
+            lat: 48.464061,
+            lng: 35.045512
+          };
+          setCenter(initialCenter);
+          setMarkers([initialCenter]);
+        });
+    }
+  }, [initialPath]);
 
   return {
     center,
