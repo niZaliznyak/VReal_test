@@ -8,26 +8,22 @@ import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import MapIcon from "@mui/icons-material/Map";
-import DoneIcon from '@mui/icons-material/Done';
+import DoneIcon from "@mui/icons-material/Done";
 
 import Map from "../Map";
 import { IconWrap, ModalContent, Section, TitleBar } from "./styled";
 
 import pathsStore from "../../store";
-import { TLocation } from "../../types";
+import { TLocation, TPath } from "../../types";
 
-type TAddPathForm = {
-  title: string;
-  shortDescription: string;
-  fullDescription: string;
-};
+type TAddPathForm = Pick<
+  TPath,
+  "title" | "shortDescription" | "fullDescription"
+>;
 
 type TAddPathErrors = Partial<TAddPathForm>;
 
-type TCourse = {
-  length: string;
-  markers: TLocation[];
-};
+type TCourse = Pick<TPath, "length" | "markers">;
 
 type TProps = {
   open: boolean;
@@ -173,7 +169,8 @@ export default function AddPathModal({ onClose, open }: TProps) {
               Length {course?.length}
             </Box>
             <Button onClick={validateForm} type="submit" variant="contained">
-              <DoneIcon />Add path
+              <DoneIcon />
+              Add path
             </Button>
           </Box>
         </Section>
