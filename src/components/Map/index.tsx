@@ -65,6 +65,7 @@ export default function Map({
         <DirectionsRenderer
           directions={directions}
           options={{
+            preserveViewport: false,
             suppressMarkers: true
           }}
         />
