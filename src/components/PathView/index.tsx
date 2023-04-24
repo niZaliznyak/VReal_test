@@ -8,6 +8,7 @@ import ZoomOutMapIcon from "@mui/icons-material/ZoomOutMap";
 
 import AlertDialog from "./components/AlertDialog";
 import { Actions, Empty, Title } from "./styled";
+import Map from "../Map";
 import { TPath } from "../../types";
 
 import pathsStore from "../../store";
@@ -52,11 +53,18 @@ function PathView({ path, onRemove }: TProps) {
         </Typography>
       </Title>
       <Typography gutterBottom>{path.fullDescription}</Typography>
+      <Box sx={{ height: "500px" }}>
+        <Map initialMarkers={path.markers} onlyView />
+      </Box>
       <Actions>
         <Button onClick={() => toggleFavorite(path.id)} variant="text">
           {path.favorite ? "Remove from favorites" : "Add to favorites"}
         </Button>
-        <Button onClick={() => setOpenDeleteDialog(true)} variant="text" color="error">
+        <Button
+          onClick={() => setOpenDeleteDialog(true)}
+          variant="text"
+          color="error"
+        >
           Remove
         </Button>
       </Actions>

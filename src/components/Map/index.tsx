@@ -14,9 +14,14 @@ import { formatDistance } from "../../utils";
 type TProps = {
   initialMarkers?: TLocation[];
   onCourseChage?: (markers: TLocation[], length: string) => void;
+  onlyView?: boolean;
 };
 
-export default function Map({ initialMarkers, onCourseChage }: TProps) {
+export default function Map({
+  initialMarkers,
+  onCourseChage,
+  onlyView
+}: TProps) {
   const {
     center,
     markers,
@@ -42,7 +47,7 @@ export default function Map({ initialMarkers, onCourseChage }: TProps) {
       }}
       center={center}
       zoom={16}
-      onDblClick={addMarker}
+      onDblClick={onlyView ? undefined : addMarker}
       options={mapOptions}
     >
       {origin && destination && (
@@ -68,7 +73,9 @@ export default function Map({ initialMarkers, onCourseChage }: TProps) {
         <Marker
           key={marker.id}
           position={marker}
-          onDblClick={() => removeMarker(marker.id)}
+          onDblClick={() => {
+            !onlyView && removeMarker(marker.id);
+          }}
         />
       ))}
     </GoogleMap>
