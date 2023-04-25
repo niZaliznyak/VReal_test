@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { TLocation, TPath } from "../../../types";
 import pathsStore from "../../../store";
 
@@ -82,9 +82,9 @@ export default function useCreatePathForm() {
     }
   };
 
-  const onCourseChange = (markers: TLocation[], length: string) => {
+  const onCourseChange = useCallback((markers: TLocation[], length: string) => {
     setCourse({ length, markers });
-  };
+  }, []);
 
   return {
     onFormInputChange,
