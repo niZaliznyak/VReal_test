@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, memo } from "react";
 import {
   GoogleMap,
   Marker,
@@ -17,7 +17,7 @@ type TProps = {
   onlyView?: boolean;
 };
 
-export default function Map({
+function Map({
   initialMarkers,
   onCourseChage,
   onlyView
@@ -38,7 +38,7 @@ export default function Map({
   useEffect(() => {
     onCourseChage && onCourseChage(markers, formatDistance(distance));
   }, [distance, markers, onCourseChage]);
-
+  console.log('rander')
   return (
     <GoogleMap
       mapContainerStyle={{
@@ -82,3 +82,5 @@ export default function Map({
     </GoogleMap>
   );
 }
+
+export default memo(Map);
