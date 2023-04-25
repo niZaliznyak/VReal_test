@@ -43,7 +43,7 @@ function PathView({ path, onRemove }: TProps) {
     removePath(path.id);
     onRemove();
   };
-
+  
   return (
     <Box
       sx={{ width: "100%", height: "100%", marginLeft: 0.5, padding: "0 1rem" }}

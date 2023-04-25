@@ -38,7 +38,7 @@ function Map({
   useEffect(() => {
     onCourseChage && onCourseChage(markers, formatDistance(distance));
   }, [distance, markers, onCourseChage]);
-  console.log('rander')
+
   return (
     <GoogleMap
       mapContainerStyle={{
