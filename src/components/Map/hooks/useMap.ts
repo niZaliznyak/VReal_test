@@ -10,6 +10,9 @@ export default function useMap(initialPath?: TLocation[]) {
   const [markers, setMarkers] = useState<TLocation[]>([]);
   const [directions, setDirections] = useState<TDirections>(null);
   const [distance, setDistance] = useState<number>(0);
+  const [prevGeocodedWaypoints, setPrevGeocodedWaypoints] = useState<
+    google.maps.DirectionsGeocodedWaypoint[]
+  >([]);
 
   const origin = useMemo(() => markers[0], [markers]);
   const destination = useMemo(
@@ -24,15 +27,29 @@ export default function useMap(initialPath?: TLocation[]) {
 
   const onChangeDirection = useCallback(
     (response: TDirections) => {
-      if (response !== null) {
-        setDirections(response);
-        const route = response.routes[0];
-        const distanceInMeters = Math.round(
-          google.maps.geometry.spherical.computeLength(route.overview_path)
-        );
-        if (distanceInMeters !== distance) {
-          setDistance(distanceInMeters);
+      if (!response || !response.geocoded_waypoints) {
+        return;
+      }
+
+      const { geocoded_waypoints } = response;
+      const waypointsHaveChanged = geocoded_waypoints.some(
+        (waypoint, index) => {
+          return (
+            !prevGeocodedWaypoints[index] ||
+            prevGeocodedWaypoints[index].place_id !== waypoint.place_id
+          );
         }
+      );
+
+      if (waypointsHaveChanged) {
+        setDirections(response);
+        const distanceInMeters = Math.round(
+          google.maps.geometry.spherical.computeLength(
+            response.routes[0].overview_path
+          )
+        );
+        setDistance(distanceInMeters);
+        setPrevGeocodedWaypoints(geocoded_waypoints);
       }
     },
     [distance]

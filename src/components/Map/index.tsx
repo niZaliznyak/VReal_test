@@ -11,17 +11,15 @@ import { mapOptions } from "./config";
 import { TLocation } from "../../types";
 import { formatDistance } from "../../utils";
 
+const MemoizedDirectionsService = memo(DirectionsService);
+
 type TProps = {
   initialMarkers?: TLocation[];
   onCourseChage?: (markers: TLocation[], length: string) => void;
   onlyView?: boolean;
 };
 
-function Map({
-  initialMarkers,
-  onCourseChage,
-  onlyView
-}: TProps) {
+function Map({ initialMarkers, onCourseChage, onlyView }: TProps) {
   const {
     center,
     markers,
@@ -37,7 +35,7 @@ function Map({
 
   useEffect(() => {
     onCourseChage && onCourseChage(markers, formatDistance(distance));
-  }, [distance, markers, onCourseChage]);
+  }, [distance, markers]);
 
   return (
     <GoogleMap
@@ -51,7 +49,7 @@ function Map({
       options={mapOptions}
     >
       {origin && destination && (
-        <DirectionsService
+        <MemoizedDirectionsService
           options={{
             destination,
             origin,
